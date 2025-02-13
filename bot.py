@@ -66,6 +66,7 @@ async def on_startup(_):
 
 async def on_shutdown(_):
     await bot.delete_webhook()
+    await bot.session.close()  # ✅ Properly close the bot session
 
 # Webhook request handler
 async def handle_webhook(request):
