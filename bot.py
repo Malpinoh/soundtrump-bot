@@ -55,7 +55,7 @@ async def handle_buttons(callback: CallbackQuery):
     elif callback.data == "profile":
         await callback.message.answer("👤 Your profile is under construction.")
     
-    await callback.answer()  # Acknowledge callback
+    await callback.answer()  
 
 # Webhook setup
 async def on_startup(_):
@@ -72,8 +72,8 @@ async def handle_webhook(request):
 
 async def handle_webhook(request):
     body = await request.json()
-    update = Update.model_validate(body)  # Aiogram v3 uses `model_validate` instead of `parse_raw`
-    await bot.handle_update(update)
+    update = Update.model_validate(body)  
+    await dp._process_update(update)
     return web.Response()
     return web.Response()
 
