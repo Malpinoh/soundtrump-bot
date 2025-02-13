@@ -57,7 +57,12 @@ async def handle_buttons(callback: CallbackQuery):
 
 # Webhook setup functions
 async def on_startup(_):
-    await bot.set_webhook(WEBHOOK_URL)
+    webhook_url = os.getenv("WEBHOOK_URL")  # Get webhook URL from env
+    if webhook_url:
+        await bot.set_webhook(webhook_url)
+        print(f"✅ Webhook set to: {webhook_url}")
+    else:
+        print("❌ WEBHOOK_URL is not set!")
 
 async def on_shutdown(_):
     await bot.delete_webhook()
