@@ -1,18 +1,16 @@
 import logging
-import asyncio
 import os
 from aiogram import Bot, Dispatcher, types
-from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
+from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, Update
 from aiogram.filters import Command
 from dotenv import load_dotenv
 from aiohttp import web
-from aiogram.types import Update
-
+import asyncio
 
 # Load environment variables
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # Set this in Railway environment variables
+WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # Ensure this is set in Railway environment variables
 
 # Initialize bot and dispatcher
 bot = Bot(token=BOT_TOKEN)
@@ -57,29 +55,29 @@ async def handle_buttons(callback: CallbackQuery):
     
     await callback.answer()  
 
-# Webhook setup
+# Webhook setup functions
 async def on_startup(_):
     await bot.set_webhook(WEBHOOK_URL)
 
 async def on_shutdown(_):
     await bot.delete_webhook()
 
-# Create web server for webhook
-app = web.Application()
-async def handle_webhook(request):
-    update = await request.json()
-    from aiogram.types import Update
-
+# Webhook request handler
 async def handle_webhook(request):
     body = await request.json()
-    update = Update.model_validate(body)  
-    await dp._process_update(update)
-    return web.Response()
+    update = Update.model_validate(body)  # Properly validate update
+
+    await dp.feed_update(bot, update)  # Correct aiogram v3 method
+    
     return web.Response()
 
+# Create web server for webhook
+app = web.Application()
 app.router.add_post("/webhook", handle_webhook)
 
 # Run the bot with webhook
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
+    app.on_startup.append(on_startup)
+    app.on_shutdown.append(on_shutdown)
     web.run_app(app, host="0.0.0.0", port=8000)
