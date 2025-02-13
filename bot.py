@@ -6,6 +6,8 @@ from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, C
 from aiogram.filters import Command
 from dotenv import load_dotenv
 from aiohttp import web
+from aiogram.types import Update
+
 
 # Load environment variables
 load_dotenv()
