@@ -66,7 +66,13 @@ async def on_shutdown(_):
 app = web.Application()
 async def handle_webhook(request):
     update = await request.json()
-    await dp.feed_webhook_data(bot, update)
+    from aiogram.types import Update
+
+async def handle_webhook(request):
+    body = await request.json()
+    update = Update.model_validate(body)  # Aiogram v3 uses `model_validate` instead of `parse_raw`
+    await dp.update.update(update)
+    return web.Response()
     return web.Response()
 
 app.router.add_post("/webhook", handle_webhook)
