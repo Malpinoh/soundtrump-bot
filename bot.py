@@ -73,7 +73,7 @@ async def handle_webhook(request):
 async def handle_webhook(request):
     body = await request.json()
     update = Update.model_validate(body)  # Aiogram v3 uses `model_validate` instead of `parse_raw`
-    await dp.update.update(update)
+    await bot.handle_update(update)
     return web.Response()
     return web.Response()
 
